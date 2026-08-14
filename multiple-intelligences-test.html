@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多元智能测试 · 发现你的智能优势</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #f4f3ef;
+    --card: #ffffff;
+    --text: #2c2c2a;
+    --text2: #6b6b68;
+    --text3: #a0a09c;
+    --border: rgba(0,0,0,0.07);
+    --radius: 16px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.05);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .screen {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- Welcome ---------- */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .welcome-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px;
+    font-size: 28px;
+  }
+
+  .welcome h1 {
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .welcome .subtitle {
+    text-align: center;
+    color: var(--text2);
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+
+  .intel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .intel-tag {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .intel-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .quiz-info {
+    display: flex; justify-content: center; gap: 24px;
+    margin-bottom: 28px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+  .quiz-info span { display: flex; align-items: center; gap: 6px; }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #534ab7, #378add);
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* ---------- Quiz ---------- */
+  .progress-wrap {
+    margin-bottom: 24px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease, background 0.3s ease;
+    width: 0;
+  }
+  .progress-text {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text3);
+  }
+
+  .q-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 36px 28px 28px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .q-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  .q-text {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 36px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rating-row {
+    display: flex; justify-content: center; gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .rating-btn {
+    width: 52px; height: 52px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    background: var(--card);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1px;
+  }
+  .rating-btn small {
+    font-size: 9px; font-weight: 400;
+    color: var(--text3);
+    line-height: 1;
+  }
+  .rating-btn:hover {
+    border-color: var(--accent, #534ab7);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .rating-btn.selected {
+    border-color: var(--accent, #534ab7);
+    background: var(--accent-light, #eeedfe);
+    color: var(--accent, #534ab7);
+  }
+  .rating-btn.selected small { color: var(--accent, #534ab7); }
+
+  .rating-labels {
+    display: flex; justify-content: center; gap: 10px;
+    font-size: 11px; color: var(--text3);
+    margin-bottom: 20px;
+  }
+  .rating-labels span {
+    width: 52px; text-align: center;
+  }
+
+  .quiz-nav {
+    display: flex; justify-content: space-between;
+    gap: 12px;
+  }
+
+  .btn-ghost {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: var(--text3);
+    color: var(--text);
+  }
+  .btn-ghost:disabled { opacity: 0.35; cursor: default; }
+
+  .btn-next {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-next:disabled { opacity: 0.4; cursor: default; }
+
+  .keyboard-hint {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  /* ---------- Results ---------- */
+  .results h1 {
+    font-size: 24px; font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .results .subtitle {
+    text-align: center;
+    color: var(--text2);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .chart-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .chart-card canvas {
+    max-height: 340px;
+  }
+
+  .scores-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .scores-card h2 {
+    font-size: 16px; font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .score-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .score-row:last-child { margin-bottom: 0; }
+
+  .score-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .score-info { flex: 1; min-width: 0; }
+  .score-name {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .score-name .label { font-size: 14px; font-weight: 500; }
+  .score-name .value {
+    font-size: 16px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-bar {
+    height: 8px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 4px;
+    width: 0;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .top-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .top-card h2 {
+    font-size: 16px; font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .top-card .h2-sub {
+    font-size: 13px; color: var(--text3);
+    margin-bottom: 20px;
+  }
+
+  .top-item {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .top-item:last-child { margin-bottom: 0; }
+
+  .top-item-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .top-rank {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .top-name { font-size: 15px; font-weight: 600; }
+  .top-score {
+    margin-left: auto;
+    font-size: 15px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .top-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .top-careers {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .summary-card {
+    background: linear-gradient(135deg, #534ab7, #378add);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  .summary-card h2 {
+    font-size: 16px; font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .summary-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    opacity: 0.95;
+  }
+
+  .restart-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    font-size: 15px; font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .restart-btn:hover { border-color: var(--text3); }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+  .footer-note a { color: var(--text2); text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .container { padding: 12px; }
+    .card { padding: 28px 20px; }
+    .q-card { padding: 28px 20px 20px; }
+    .q-text { font-size: 18px; }
+    .rating-btn { width: 46px; height: 46px; }
+    .rating-labels span { width: 46px; font-size: 10px; }
+    .intel-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ======== Welcome ======== -->
+  <div id="welcome" class="screen active">
+    <div class="card">
+      <div class="welcome-icon" style="background:#eeedfe;">
+        <span style="font-size:28px;">🧠</span>
+      </div>
+      <h1>多元智能测试</h1>
+      <p class="subtitle">基于霍华德·加德纳多元智能理论 · 发现你的智能优势</p>
+
+      <div class="intel-grid" id="intelGrid"></div>
+
+      <div class="quiz-info">
+        <span>📋 32 道题</span>
+        <span>⏱️ 约 5 分钟</span>
+        <span>📊 1-10 分评分</span>
+      </div>
+
+      <button class="btn-primary" onclick="startQuiz()">开始测试</button>
+    </div>
+  </div>
+
+  <!-- ======== Quiz ======== -->
+  <div id="quiz" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text">
+        <span id="progressLabel">第 1 / 32 题</span>
+        <span id="intelLabel">语言智能</span>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-badge" id="qBadge">语言智能</div>
+      <div class="q-text" id="qText">问题内容</div>
+
+      <div class="rating-row" id="ratingRow"></div>
+      <div class="rating-labels">
+        <span>很不符合</span>
+        <span>不太符合</span>
+        <span>一般</span>
+        <span>比较符合</span>
+        <span>非常符合</span>
+      </div>
+
+      <div class="quiz-nav">
+        <button class="btn-ghost" id="prevBtn" onclick="prevQuestion()" disabled>← 上一题</button>
+        <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>下一题</button>
+      </div>
+    </div>
+
+    <p class="keyboard-hint">提示：可按数字键 1-5 快速选择</p>
+  </div>
+
+  <!-- ======== Results ======== -->
+  <div id="results" class="screen">
+    <h1>你的多元智能图谱</h1>
+    <p class="subtitle">以下是基于你的回答生成的智能评分</p>
+
+    <div class="chart-card">
+      <canvas id="radarChart"></canvas>
+    </div>
+
+    <div class="scores-card">
+      <h2>各项得分</h2>
+      <div id="scoreList"></div>
+    </div>
+
+    <div class="top-card">
+      <h2>你的三大智能优势</h2>
+      <p class="h2-sub">了解你的核心能力与潜在发展方向</p>
+      <div id="topList"></div>
+    </div>
+
+    <div class="summary-card" id="summaryCard">
+      <h2>综合分析</h2>
+      <p id="summaryText"></p>
+    </div>
+
+    <button class="restart-btn" onclick="restart()">↻ 重新测试</button>
+
+    <p class="footer-note">
+      本测试基于加德纳多元智能理论设计，仅供参考与自我探索。<br>
+      智能并非固定不变，通过持续学习和实践可以发展任何智能领域。
+    </p>
+  </div>
+
+</div>
+
+<script>
+const intelligences = [
+  {
+    name: '语言智能', en: 'Linguistic', icon: '✍️',
+    color: '#185fa5', bg: '#e6f1fb', bgSoft: '#f0f7fd',
+    desc: '你善于运用语言来表达思想和情感，无论是口头还是书面表达都是你的强项。你对文字有天然的敏感度，能精准地用词遣句。',
+    careers: '作家 · 记者 · 律师 · 教师 · 演说家',
+    questions: [
+      '我喜欢阅读各种类型的书籍和文章',
+      '我能清晰、有条理地用文字表达自己的想法',
+      '我喜欢玩文字游戏（如填字游戏、成语接龙）',
+      '我学习新词汇很快，并能在日常中自然使用'
+    ]
+  },
+  {
+    name: '逻辑数学智能', en: 'Logical-Mathematical', icon: '🔢',
+    color: '#534ab7', bg: '#eeedfe', bgSoft: '#f3f2fc',
+    desc: '你拥有强大的逻辑推理和数学思维能力，善于分析问题、发现规律，做决定时更依赖理性而非直觉。',
+    careers: '科学家 · 工程师 · 程序员 · 数据分析师',
+    questions: [
+      '我喜欢解决逻辑谜题、数学难题或推理游戏',
+      '我善于发现事物的规律、模式和因果关系',
+      '做决定时我更倾向于理性分析而非凭直觉',
+      '我对数字和数据比较敏感，喜欢用数据说话'
+    ]
+  },
+  {
+    name: '空间智能', en: 'Spatial', icon: '🎯',
+    color: '#0f6e56', bg: '#e1f5ee', bgSoft: '#eef9f4',
+    desc: '你对空间和视觉信息有出色的感知能力，善于在脑海中构建和操作图像，方向感也很好。',
+    careers: '建筑师 · 设计师 · 摄影师 · 飞行员 · 工程师',
+    questions: [
+      '我有很好的方向感，去过的路很少迷路',
+      '我能在脑海中清晰地想象物体的三维形状',
+      '我喜欢画画、设计或制作视觉作品',
+      '我阅读地图、图表和示意图时理解很快'
+    ]
+  },
+  {
+    name: '身体运动智能', en: 'Bodily-Kinesthetic', icon: '🏃',
+    color: '#993c1d', bg: '#faece7', bgSoft: '#fcf4f0',
+    desc: '你拥有出色的身体协调和控制能力，善于通过动作来表达和解决问题，动手能力强。',
+    careers: '运动员 · 舞蹈家 · 外科医生 · 手工艺人',
+    questions: [
+      '我擅长至少一项体育运动或身体技能',
+      '我动手能力强，喜欢手工制作或修理物品',
+      '我学习新的身体动作（如舞蹈、武术）很快',
+      '我思考时常会不由自主地用手势或身体辅助'
+    ]
+  },
+  {
+    name: '音乐智能', en: 'Musical', icon: '🎵',
+    color: '#993556', bg: '#fbeaf0', bgSoft: '#fcf2f5',
+    desc: '你对音乐有天然的敏感度，能感知、辨别和创造音乐，对节奏和旋律有出色的感受力。',
+    careers: '音乐家 · 作曲家 · 音乐制作人 · 歌手',
+    questions: [
+      '我能准确辨别音准、节奏和旋律的变化',
+      '我会演奏至少一种乐器或喜欢唱歌',
+      '听音乐时我能分辨出不同乐器的声音',
+      '我经常在脑海中哼歌或不自觉地打节拍'
+    ]
+  },
+  {
+    name: '人际智能', en: 'Interpersonal', icon: '🤝',
+    color: '#854f0b', bg: '#faeeda', bgSoft: '#fcf3e7',
+    desc: '你善于理解和与他人交往，能够敏锐地察觉他人的情绪和需求，在团队中常扮演协调者角色。',
+    careers: '教师 · 管理者 · 心理咨询师 · 销售经理',
+    questions: [
+      '我善于察觉他人的情绪变化和言外之意',
+      '我在团队中常担任协调者或组织者的角色',
+      '我容易和陌生人建立融洽的关系',
+      '我能理解和包容不同人的立场和观点'
+    ]
+  },
+  {
+    name: '内省智能', en: 'Intrapersonal', icon: '🧘',
+    color: '#3b6d11', bg: '#eaf3de', bgSoft: '#eff6e7',
+    desc: '你有深刻的自我认知，清楚自己的优势、弱点和目标，善于自我反思和独立决策。',
+    careers: '哲学家 · 心理学家 · 作家 · 创业者',
+    questions: [
+      '我清楚地知道自己的优点和弱点',
+      '我经常反思自己的行为、情绪和决定',
+      '我清楚自己真正想要什么，不容易被左右',
+      '我能独立做出重要决定，不依赖他人'
+    ]
+  },
+  {
+    name: '自然探索智能', en: 'Naturalistic', icon: '🌿',
+    color: '#5f5e5a', bg: '#f1efe8', bgSoft: '#f5f3ee',
+    desc: '你对自然界有敏锐的观察力，善于识别和分类自然事物，关注环境变化和生态保护。',
+    careers: '生物学家 · 环保工作者 · 农学家 · 园艺师',
+    questions: [
+      '我喜欢户外活动，乐于接触大自然',
+      '我能识别多种动植物的名称和特征',
+      '我关注环境变化和生态保护问题',
+      '我喜欢对事物进行分类和整理'
+    ]
+  }
+];
+
+// Flatten questions into a list
+const questions = [];
+intelligences.forEach((intel, i) => {
+  intel.questions.forEach((q, j) => {
+    questions.push({ intelIndex: i, qIndex: j, text: q });
+  });
+});
+
+let currentQ = 0;
+let answers = new Array(questions.length).fill(null);
+let radarChartInstance = null;
+
+// ---- Welcome: render intelligence grid ----
+function renderIntelGrid() {
+  const grid = document.getElementById('intelGrid');
+  grid.innerHTML = intelligences.map(intel => `
+    <div class="intel-tag" style="background:${intel.bg}; color:${intel.color};">
+      <span class="intel-dot" style="background:${intel.color};"></span>
+      ${intel.name}
+    </div>
+  `).join('');
+}
+
+// ---- Quiz ----
+function startQuiz() {
+  document.getElementById('welcome').classList.remove('active');
+  document.getElementById('quiz').classList.add('active');
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentQ];
+  const intel = intelligences[q.intelIndex];
+
+  // Progress
+  const pct = ((currentQ) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressFill').style.background = intel.color;
+  document.getElementById('progressLabel').textContent = `第 ${currentQ + 1} / ${questions.length} 题`;
+  document.getElementById('intelLabel').textContent = intel.name;
+  document.getElementById('intelLabel').style.color = intel.color;
+
+  // Badge
+  const badge = document.getElementById('qBadge');
+  badge.textContent = `${intel.icon} ${intel.name}`;
+  badge.style.background = intel.bg;
+  badge.style.color = intel.color;
+
+  // Question text
+  document.getElementById('qText').textContent = q.text;
+
+  // Rating buttons
+  const row = document.getElementById('ratingRow');
+  row.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'rating-btn';
+    btn.style.setProperty('--accent', intel.color);
+    btn.style.setProperty('--accent-light', intel.bgSoft);
+    btn.innerHTML = `${i}<small>${['','很不符合','不太符合','一般','比较符合','非常符合'][i]}</small>`;
+    btn.onclick = () => selectRating(i);
+    row.appendChild(btn);
+  }
+
+  // Restore previous answer
+  const prevAns = answers[currentQ];
+  if (prevAns) highlightRating(prevAns);
+
+  // Buttons
+  document.getElementById('prevBtn').disabled = currentQ === 0;
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = currentQ === questions.length - 1 ? '查看结果 →' : '下一题 →';
+  nextBtn.style.background = intel.color;
+  nextBtn.disabled = !prevAns;
+}
+
+function highlightRating(score) {
+  const btns = document.querySelectorAll('.rating-btn');
+  btns.forEach((b, i) => {
+    b.classList.toggle('selected', i + 1 === score);
+  });
+}
+
+function selectRating(score) {
+  answers[currentQ] = score;
+  highlightRating(score);
+  document.getElementById('nextBtn').disabled = false;
+
+  // Auto-advance after short delay
+  setTimeout(() => {
+    if (currentQ < questions.length - 1) {
+      nextQuestion();
+    }
+  }, 350);
+}
+
+function nextQuestion() {
+  if (!answers[currentQ]) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    showQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    showQuestion();
+  }
+}
+
+// Keyboard support
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('quiz').classList.contains('active')) return;
+  const key = parseInt(e.key);
+  if (key >= 1 && key <= 5) {
+    selectRating(key);
+  } else if (e.key === 'ArrowLeft' && currentQ > 0) {
+    prevQuestion();
+  } else if (e.key === 'ArrowRight' && answers[currentQ]) {
+    nextQuestion();
+  }
+});
+
+// ---- Results ----
+function calculateScores() {
+  return intelligences.map((intel, i) => {
+    const intelAnswers = answers.filter((a, idx) => questions[idx].intelIndex === i);
+    const total = intelAnswers.reduce((s, a) => s + a, 0);
+    const avg = total / intelAnswers.length;
+    // Convert avg (1-5) to score (1-10)
+    const score = Math.round(((avg - 1) / 4 * 9 + 1) * 10) / 10;
+    return { ...intel, score, avg, total };
+  });
+}
+
+function getLevel(score) {
+  if (score >= 8.5) return { label: '突出', color: '#534ab7' };
+  if (score >= 6.5) return { label: '优势', color: '#378add' };
+  if (score >= 4.5) return { label: '较好', color: '#1d9e75' };
+  if (score >= 2.5) return { label: '一般', color: '#854f0b' };
+  return { label: '待发展', color: '#993556' };
+}
+
+function showResults() {
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+
+  const scores = calculateScores();
+
+  // Update final progress
+  document.getElementById('progressFill').style.width = '100%';
+
+  // Radar chart
+  drawRadar(scores);
+
+  // Score list
+  renderScoreList(scores);
+
+  // Top 3
+  renderTopList(scores);
+
+  // Summary
+  renderSummary(scores);
+}
+
+function drawRadar(scores) {
+  const ctx = document.getElementById('radarChart').getContext('2d');
+
+  const data = {
+    labels: scores.map(s => s.name),
+    datasets: [{
+      label: '智能得分',
+      data: scores.map(s => s.score),
+      backgroundColor: 'rgba(83, 74, 183, 0.12)',
+      borderColor: '#534ab7',
+      borderWidth: 2,
+      pointBackgroundColor: scores.map(s => s.color),
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointRadius: 5,
+      pointHoverRadius: 7
+    }]
+  };
+
+  if (radarChartInstance) radarChartInstance.destroy();
+
+  radarChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          beginAtZero: true,
+          min: 0,
+          max: 10,
+          ticks: { stepSize: 2, font: { size: 10 }, color: '#a0a09c', backdropColor: 'transparent' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          angleLines: { color: 'rgba(0,0,0,0.06)' },
+          pointLabels: { font: { size: 12, weight: '500' }, color: '#2c2c2a' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.label}: ${ctx.raw} / 10`
+          }
+        }
+      },
+      animation: { duration: 1200, easing: 'easeOutQuart' }
+    }
+  });
+}
+
+function renderScoreList(scores) {
+  const list = document.getElementById('scoreList');
+  list.innerHTML = '';
+
+  // Sort by score descending for display
+  const sorted = [...scores].sort((a, b) => b.score - a.score);
+
+  sorted.forEach((s, idx) => {
+    const level = getLevel(s.score);
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    row.innerHTML = `
+      <div class="score-icon" style="background:${s.bg}; font-size:18px;">${s.icon}</div>
+      <div class="score-info">
+        <div class="score-name">
+          <span class="label">${s.name} <span style="color:${level.color}; font-size:12px; font-weight:500;">· ${level.label}</span></span>
+          <span class="value" style="color:${s.color};">${s.score}</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-fill" data-width="${s.score * 10}" style="background:${s.color};"></div>
+        </div>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-fill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 100);
+}
+
+function renderTopList(scores) {
+  const top3 = [...scores].sort((a, b) => b.score - a.score).slice(0, 3);
+  const list = document.getElementById('topList');
+
+  top3.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'top-item';
+    item.style.background = s.bgSoft;
+    item.innerHTML = `
+      <div class="top-item-header">
+        <div class="top-rank" style="background:${s.color};">${i + 1}</div>
+        <span class="top-name">${s.icon} ${s.name}</span>
+        <span class="top-score" style="color:${s.color};">${s.score} / 10</span>
+      </div>
+      <p class="top-desc">${s.desc}</p>
+      <p class="top-careers">适合方向：${s.careers}</p>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function renderSummary(scores) {
+  const sorted = [...scores].sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const second = sorted[1];
+  const weakest = sorted[sorted.length - 1];
+
+  const topLevel = getLevel(top.score);
+  const weakLevel = getLevel(weakest.score);
+
+  let text = `你的多元智能图谱呈现出独特的组合特征。**${top.name}**是你的核心优势（${top.score}分），${top.desc.replace(/你/g, '')}\n\n`;
+
+  if (second.score >= 6.5) {
+    text += `紧随其后的**${second.name}**（${second.score}分）同样表现出色，当这两种智能结合时，你可能在${top.careers.split(' · ')[0]}和${second.careers.split(' · ')[0]}等交叉领域具有独特优势。\n\n`;
+  }
+
+  if (weakest.score < 4) {
+    text += `相对而言，**${weakest.name}**（${weakest.score}分）是你目前待发展的领域。不过，多元智能理论强调智能是可培养的，通过有意识的练习和实践，这一领域完全可以得到提升。`;
+  } else {
+    text += `你的各项智能发展较为均衡，没有明显的短板，这是一个很好的基础。建议在保持均衡的同时，进一步深耕你的优势领域。`;
+  }
+
+  document.getElementById('summaryText').innerHTML = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '<br><br>');
+}
+
+function restart() {
+  if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('welcome').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Init
+renderIntelGrid();
+</script>
+</body>
+</html>
