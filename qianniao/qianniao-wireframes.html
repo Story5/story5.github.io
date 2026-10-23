@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>千鸟快服 · 微信小程序线框图</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    background:#F4F5F7; color:#1F2329; padding-bottom:80px;
+  }
+  /* ---------- 顶部说明 ---------- */
+  header {
+    background:linear-gradient(135deg,#1E40AF 0%,#3B82F6 60%,#38BDF8 100%);
+    color:#fff; padding:40px 32px 32px;
+  }
+  header h1 { font-size:26px; letter-spacing:1px; }
+  header p  { margin-top:8px; font-size:14px; opacity:.85; }
+  .legend { display:flex; gap:16px; margin-top:16px; font-size:12px; flex-wrap:wrap; }
+  .legend span { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.35);
+    padding:4px 12px; border-radius:999px; }
+
+  /* ---------- 侧边导航 ---------- */
+  .sidenav {
+    position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid #E5E7EB;
+    display:flex; gap:8px; padding:12px 24px; overflow-x:auto;
+  }
+  .sidenav a {
+    flex:none; font-size:13px; text-decoration:none; color:#374151;
+    border:1px solid #E5E7EB; border-radius:999px; padding:6px 14px; background:#fff;
+  }
+  .sidenav a:hover { border-color:#3B82F6; color:#2563EB; }
+
+  /* ---------- 分组 ---------- */
+  section { padding:32px 32px 8px; max-width:1500px; margin:0 auto; }
+  .sec-title { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .sec-title .dot { width:10px; height:10px; border-radius:3px; }
+  .sec-title h2 { font-size:20px; }
+  .sec-desc { font-size:13px; color:#6B7280; margin-bottom:20px; }
+  .flow {
+    display:flex; align-items:center; flex-wrap:wrap; gap:6px;
+    font-size:12px; color:#4B5563; background:#fff; border:1px dashed #D1D5DB;
+    border-radius:10px; padding:10px 14px; margin-bottom:20px;
+  }
+  .flow b { color:#2563EB; }
+  .flow i { color:#9CA3AF; font-style:normal; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:28px; }
+
+  /* ---------- 手机框 ---------- */
+  .phone-wrap { display:flex; flex-direction:column; align-items:center; }
+  .phone {
+    width:280px; background:#fff; border:1.5px solid #111827; border-radius:28px;
+    padding:8px; box-shadow:0 6px 18px rgba(0,0,0,.08);
+  }
+  .screen {
+    background:#FAFAFA; border-radius:20px; overflow:hidden;
+    height:560px; display:flex; flex-direction:column; position:relative;
+  }
+  .caption { margin-top:12px; text-align:center; }
+  .caption .no { display:inline-block; font-size:11px; font-weight:700; color:#fff;
+    background:#111827; border-radius:6px; padding:2px 8px; margin-bottom:4px; }
+  .caption .nm { font-size:14px; font-weight:600; }
+  .caption .ds { font-size:12px; color:#6B7280; margin-top:2px; max-width:280px; }
+
+  /* ---------- 线框元素 ---------- */
+  .sb { display:flex; justify-content:space-between; padding:8px 16px 4px;
+    font-size:11px; font-weight:600; color:#111827; background:#fff; flex:none; }
+  .nav { background:#fff; text-align:center; font-size:14px; font-weight:600;
+    padding:8px 12px 10px; border-bottom:1px solid #F0F0F0; position:relative; flex:none; }
+  .nav .back { position:absolute; left:14px; top:9px; color:#6B7280; font-weight:400; }
+  .nav .act { position:absolute; right:14px; top:9px; color:#6B7280; font-size:12px; font-weight:400; }
+  .body { flex:1; overflow:hidden; padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .box {
+    border:1.5px dashed #9CA3AF; border-radius:8px; background:#fff;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-size:11px; color:#4B5563; padding:6px; line-height:1.5; flex:none;
+  }
+  .box.solid { border-style:solid; background:#F3F4F6; }
+  .box.dark  { background:#1F2937; border-color:#1F2937; color:#fff; }
+  .box.blue  { border-color:#3B82F6; color:#1D4ED8; background:#EFF6FF; }
+  .row { display:flex; gap:8px; flex:none; }
+  .row > * { flex:1; }
+  .tabs { display:flex; background:#fff; border-bottom:1px solid #E5E7EB; flex:none; }
+  .tabs span { flex:1; text-align:center; font-size:11px; color:#6B7280; padding:8px 0; }
+  .tabs span.on { color:#1D4ED8; font-weight:700; border-bottom:2px solid #2563EB; }
+  .litem {
+    background:#fff; border:1px solid #E5E7EB; border-radius:8px; padding:8px 10px;
+    display:flex; align-items:center; gap:8px; flex:none;
+  }
+  .litem .ava { width:26px; height:26px; border-radius:50%; background:#E5E7EB; flex:none; }
+  .litem .tx { flex:1; min-width:0; }
+  .litem .t1 { font-size:11px; font-weight:600; }
+  .litem .t2 { font-size:10px; color:#9CA3AF; margin-top:1px; }
+  .litem .ar { color:#C4C9D0; font-size:12px; }
+  .tag { font-size:9px; border:1px solid #D1D5DB; border-radius:4px; padding:0 4px; color:#6B7280; }
+  .tag.red { color:#DC2626; border-color:#FCA5A5; }
+  .tag.green { color:#059669; border-color:#6EE7B7; }
+  .btn {
+    border-radius:8px; text-align:center; font-size:12px; font-weight:600;
+    padding:9px 0; flex:none;
+  }
+  .btn.pri { background:#2563EB; color:#fff; }
+  .btn.ghost { border:1.5px solid #2563EB; color:#2563EB; background:#fff; }
+  .btn.gray { background:#E5E7EB; color:#4B5563; }
+  .tabbar {
+    flex:none; display:flex; background:#fff; border-top:1px solid #E5E7EB; padding:6px 0 10px;
+  }
+  .tabbar span { flex:1; text-align:center; font-size:10px; color:#9CA3AF; }
+  .tabbar span.on { color:#2563EB; font-weight:700; }
+  .tabbar .ic { display:block; font-size:14px; margin-bottom:1px; }
+  .tl { background:#fff; border:1px solid #E5E7EB; border-radius:8px; padding:8px 10px; flex:none; }
+  .tl .step { display:flex; gap:8px; font-size:10.5px; color:#4B5563; padding:3px 0; align-items:flex-start; }
+  .tl .pt { width:8px; height:8px; border-radius:50%; border:2px solid #9CA3AF; margin-top:2px; flex:none; }
+  .tl .step.done .pt { background:#2563EB; border-color:#2563EB; }
+  .tl .step.done { color:#111827; font-weight:600; }
+  .img3 { display:flex; gap:6px; flex:none; }
+  .img3 i { flex:1; height:44px; border:1.5px dashed #9CA3AF; border-radius:6px;
+    display:flex; align-items:center; justify-content:center; font-size:14px; color:#9CA3AF; font-style:normal; background:#fff; }
+  .stars { text-align:center; font-size:18px; letter-spacing:4px; color:#D1D5DB; flex:none; padding:4px 0; }
+  .fab {
+    position:absolute; right:14px; bottom:66px; width:44px; height:44px; border-radius:50%;
+    background:#2563EB; color:#fff; font-size:22px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(37,99,235,.4);
+  }
+  .note { font-size:10px; color:#9CA3AF; text-align:center; flex:none; }
+  .scrollhint { flex:1; display:flex; align-items:center; justify-content:center;
+    color:#C4C9D0; font-size:10px; letter-spacing:2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>千鸟快服 · 微信小程序线框图（Low-Fi Wireframe）</h1>
+  <p>双角色：酒店商家端（发单 / 维保 / 续费） × 维修师傅端（接单 / 施工 / 结算） · 共 23 页 · v1.0</p>
+  <div class="legend">
+    <span>虚线灰盒 = 内容/图片占位</span>
+    <span>蓝色 = 主行动按钮/选中态</span>
+    <span>深蓝实色 = 强调卡片</span>
+    <span>底部栏 = TabBar</span>
+  </div>
+</header>
+
+<nav class="sidenav">
+  <a href="#common">公共入口 (3)</a>
+  <a href="#hotel">酒店商家端 (11)</a>
+  <a href="#master">维修师傅端 (8)</a>
+  <a href="#community">公共平台 (1)</a>
+  <a href="#backend">附：公司端后台</a>
+</nav>
+
+<!-- ============ 公共入口 ============ -->
+<section id="common">
+  <div class="sec-title"><span class="dot" style="background:#6B7280"></span><h2>公共入口</h2></div>
+  <p class="sec-desc">首次进入小程序的登录与身份分流，所有用户共用。</p>
+  <div class="flow"><b>P1 微信授权登录</b> <i>→</i> <b>P2 角色选择</b> <i>→</i> <b>P3 资料完善</b> <i>→</i> 进入对应端首页（H1 / M1）</div>
+  <div class="grid" id="g-common"></div>
+</section>
+
+<!-- ============ 酒店商家端 ============ -->
+<section id="hotel">
+  <div class="sec-title"><span class="dot" style="background:#2563EB"></span><h2>酒店商家端</h2></div>
+  <p class="sec-desc">酒店发起报修工单、跟踪进度、管理维保档案、充值续费。</p>
+  <div class="flow"><b>H1 首页</b> <i>→</i> <b>H2 发起报修</b>（普通/紧急）<i>→</i> <b>H4 工单详情</b>（看进度、联系工程师）<i>→</i> <b>H6 验收评价</b>；续费不足时 <i>→</i> <b>H10 充值续费</b></div>
+  <div class="grid" id="g-hotel"></div>
+</section>
+
+<!-- ============ 维修师傅端 ============ -->
+<section id="master">
+  <div class="sec-title"><span class="dot" style="background:#059669"></span><h2>维修师傅端</h2></div>
+  <p class="sec-desc">工程师接单抢单、上报施工进度、记录材料、完工结算。</p>
+  <div class="flow"><b>M2 工单大厅</b> <i>→</i> <b>M3 工单详情/接单</b> <i>→</i> <b>M4 施工上报</b>（进度+材料）<i>→</i> <b>M5 完工提交</b> <i>→</i> 酒店 H6 验收后 <i>→</i> <b>M7 收入结算</b></div>
+  <div class="grid" id="g-master"></div>
+</section>
+
+<!-- ============ 公共平台 ============ -->
+<section id="community">
+  <div class="sec-title"><span class="dot" style="background:#D97706"></span><h2>公共平台</h2></div>
+  <p class="sec-desc">酒店圈信息交流、招聘与广告，双端均可访问（TabBar 入口）。</p>
+  <div class="grid" id="g-community"></div>
+</section>
+
+<!-- ============ 公司端说明 ============ -->
+<section id="backend">
+  <div class="sec-title"><span class="dot" style="background:#7C3AED"></span><h2>附：公司端（建议做 Web 管理后台，不进小程序）</h2></div>
+  <p class="sec-desc">思维导图中的「公司端」面向平台运营方，功能为数据管理而非高频操作，建议以 Web 后台承载：</p>
+  <div class="flow" style="display:block; line-height:2">
+    · 工程师管理：查看工程师负责的酒店列表、实时位置与工单进度<br>
+    · 质量监控：差评工单预警、评价汇总、响应/完工时长统计<br>
+    · 工单调度：派单规则设置（自动派单 vs 抢单）、紧急工单升级<br>
+    · 财务结算：酒店充值记录、师傅结算审核、材料费用对账<br>
+    · 内容运营：酒店圈帖子审核、广告位与招聘信息管理
+  </div>
+</section>
+
+<script>
+/* ========== 元素渲染器 ========== */
+const R = {
+  sb:   () => `<div class="sb"><span>9:41</span><span>📶 🛜 🔋</span></div>`,
+  nav:  (t, act) => `<div class="nav"><span class="back">‹</span>${t}${act?`<span class="act">${act}</span>`:''}</div>`,
+  box:  (label, h=56, cls='') => `<div class="box ${cls}" style="height:${h}px">${label}</div>`,
+  row2: (a, b, h=56) => `<div class="row"><div class="box" style="height:${h}px">${a}</div><div class="box" style="height:${h}px">${b}</div></div>`,
+  tabs: (arr, on=0) => `<div class="tabs">${arr.map((t,i)=>`<span class="${i===on?'on':''}">${t}</span>`).join('')}</div>`,
+  litem:(t, s, extra='›') => `<div class="litem"><div class="ava"></div><div class="tx"><div class="t1">${t}</div><div class="t2">${s}</div></div>${extra}</div>`,
+  btn:  (t, cls='pri') => `<div class="btn ${cls}">${t}</div>`,
+  tabbar:(items, on=0) => `<div class="tabbar">${items.map((t,i)=>`<span class="${i===on?'on':''}"><span class="ic">▢</span>${t}</span>`).join('')}</div>`,
+  tl:   (steps) => `<div class="tl">${steps.map(([t,d])=>`<div class="step ${d?'done':''}"><span class="pt"></span><span>${t}</span></div>`).join('')}</div>`,
+  img3: () => `<div class="img3"><i>＋</i><i>＋</i><i>🎤</i></div>`,
+  stars:() => `<div class="stars">★★★★★</div>`,
+  fab:  () => `<div class="fab">＋</div>`,
+  note: (t) => `<div class="note">${t}</div>`,
+  more: () => `<div class="scrollhint">· · · 下滑更多 · · ·</div>`,
+};
+const E = (fn, ...args) => ({fn, args});
+
+/* ========== 页面定义 ========== */
+const PAGES = [
+/* ---------- 公共入口 ---------- */
+{ g:'common', no:'P1', name:'微信授权登录页', desc:'首次进入，微信一键授权',
+  els:[ E(R.nav,'千鸟快服'),
+        E(R.box,'品牌 Logo + Slogan<br>「酒店维修，就找千鸟快服」',120,'blue'),
+        E(R.box,'服务能力标签：7×24 响应 · 收费透明 · 专属工程师',48),
+        E(R.btn,'微信一键登录'),
+        E(R.btn,'手机号验证码登录','ghost'),
+        E(R.note,'登录即同意《用户协议》与《隐私政策》') ] },
+{ g:'common', no:'P2', name:'角色选择页', desc:'选择身份，决定进入哪一端',
+  els:[ E(R.nav,'选择身份'),
+        E(R.box,'🏨<br>我是酒店商家<br><small>发起报修 · 管理维保</small>',110),
+        E(R.box,'🔧<br>我是维修师傅<br><small>接单维修 · 赚取收入</small>',110),
+        E(R.note,'身份提交后需完善资料，可在「我的」中申请切换') ] },
+{ g:'common', no:'P3', name:'资料完善页（双态）', desc:'酒店填酒店信息；师傅填技能认证',
+  els:[ E(R.nav,'完善资料'),
+        E(R.box,'【酒店】酒店名称 / 品牌 / 地址(地图选址) / 联系人 / 电话',76),
+        E(R.box,'【师傅】姓名 / 电话 / 擅长工种(水电·木工·空调·防水…) / 服务城市',76),
+        E(R.box,'【师傅】上传技能证书 / 实名认证（身份证）',52),
+        E(R.btn,'提交审核'),
+        E(R.note,'师傅资料需平台审核通过后方可接单') ] },
+
+/* ---------- 酒店商家端 ---------- */
+{ g:'hotel', no:'H1', name:'酒店端 · 首页', desc:'报修入口 + 账户状态 + 工单概览',
+  els:[ E(R.nav,'千鸟快服','🔔'),
+        E(R.box,'账户状态卡：服务有效期至 2026-12-31 · 余额 ¥1,200 <span class="tag red">7天后到期</span>',52,'dark'),
+        E(R.btn,'＋ 发起报修'),
+        E(R.row2,'🔧 普通维修<br><small>不影响售房</small>','🚨 紧急维修<br><small>在住/满房</small>',64),
+        E(R.tabs,['进行中 2','待评价 1','已完成 36'],0),
+        E(R.litem,'#WX20261023 · 1208房 空调不制冷','工程师：王师傅 · 维修中','<span class="tag">进度</span>'),
+        E(R.litem,'#WX20261022 · 大堂 吊灯闪烁','待派单','<span class="tag red">紧急</span>'),
+        E(R.more,''),
+        E(R.tabbar,['首页','工单','维保','酒店圈','我的'],0) ] },
+{ g:'hotel', no:'H2', name:'发起报修页', desc:'类型选择 + 房号 + 图文语音描述',
+  els:[ E(R.nav,'发起报修'),
+        E(R.tabs,['🔧 普通维修','🚨 紧急维修'],0),
+        E(R.box,'维修类目：水电 / 空调 / 卫浴 / 木工 / 防水 / 其他（图标宫格）',64),
+        E(R.box,'选择房间：1208（从已录房号中选择，可多选）',40),
+        E(R.box,'故障描述（文字输入区）…',64),
+        E(R.img3,''),
+        E(R.note,'支持上传照片 / 语音描述，紧急单将优先派单'),
+        E(R.btn,'提交工单'),
+        E(R.note,'⚠ 账户余额不足或服务到期时，此页顶部显示「去充值」拦截条') ] },
+{ g:'hotel', no:'H3', name:'工单列表页', desc:'全部工单，按状态筛选',
+  els:[ E(R.nav,'我的工单'),
+        E(R.tabs,['全部','进行中','待评价','已完成'],0),
+        E(R.box,'🔍 搜索：房号 / 单号 / 类型',34),
+        E(R.litem,'#WX20261023 · 1208房 空调','王师傅 · 维修中','<span class="tag">进度</span>'),
+        E(R.litem,'#WX20261022 · 大堂 吊灯','待派单','<span class="tag red">紧急</span>'),
+        E(R.litem,'#WX20261018 · 305房 马桶','已完工 · 待评价','<span class="tag green">评价</span>'),
+        E(R.more,''),
+        E(R.tabbar,['首页','工单','维保','酒店圈','我的'],1) ] },
+{ g:'hotel', no:'H4', name:'工单详情页（进度跟踪）', desc:'工程进度时间轴 + 工程师信息',
+  els:[ E(R.nav,'工单详情'),
+        E(R.box,'#WX20261023 · 1208房 空调不制冷<br><span class="tag">普通单</span> 报修时间 10-23 14:20',54),
+        E(R.tl,[['✓ 已提交 14:20',1],['✓ 已派单 → 王师傅 14:35',1],['● 维修中（工程师已到店 15:10）',1],['○ 待验收',0],['○ 已完成',0]]),
+        E(R.litem,'👷 王师傅 · 电工 ★4.9','服务 328 单 · 距您 1.2km','📞'),
+        E(R.box,'工程师施工动态：照片 2 张 · 文字进展 1 条',48),
+        E(R.row2,'💬 联系工程师','📍 查看位置',40),
+        E(R.btn,'确认完工并评价','ghost'),
+        E(R.tabbar,['首页','工单','维保','酒店圈','我的'],1) ] },
+{ g:'hotel', no:'H5', name:'沟通对话页', desc:'与工程师文字 / 语音 / 图片沟通',
+  els:[ E(R.nav,'王师傅','📞'),
+        E(R.box,'对方消息气泡（文字/图片）',44),
+        E(R.box,'我方消息气泡（语音条 ▶ 0\'15"）',36,'blue'),
+        E(R.box,'对方消息：照片（维修部位特写）',44),
+        E(R.more,''),
+        E(R.box,'🎤 按住说话 ｜ 输入文字… ｜ ＋图片',40,'solid') ] },
+{ g:'hotel', no:'H6', name:'验收评价页', desc:'确认收工 + 星级评价（差评直达公司端）',
+  els:[ E(R.nav,'验收与评价'),
+        E(R.box,'完工凭证：工程师上传的维修后照片 ×3 + 完工说明',72),
+        E(R.box,'材料使用清单：铜管 2m · 制冷剂 ×1（费用 ¥80）',48),
+        E(R.stars,''),
+        E(R.box,'评价标签：响应快 / 技术好 / 收费合理 / 态度好',44),
+        E(R.box,'补充评价（选填）…',48),
+        E(R.btn,'确认收工并提交评价'),
+        E(R.note,'★≤2 星将标记为差评，实时推送至公司端领导层') ] },
+{ g:'hotel', no:'H7', name:'维保中心', desc:'维保档案总入口',
+  els:[ E(R.nav,'维保管理'),
+        E(R.row2,'🚪 房号管理<br><small>已录 86 间</small>','📋 维保记录<br><small>本月 12 条</small>',64),
+        E(R.row2,'🧰 材料清单<br><small>库存 24 项</small>','🗓 维保计划<br><small>进行中 3 项</small>',64),
+        E(R.box,'维保日历视图：本月计划执行节点一览',110),
+        E(R.tabbar,['首页','工单','维保','酒店圈','我的'],2) ] },
+{ g:'hotel', no:'H8', name:'房号管理页', desc:'录入 / 批量导入客房房号',
+  els:[ E(R.nav,'房号管理','＋批量导入'),
+        E(R.box,'按楼层分组：1F（101-112）· 2F（201-214）…',44),
+        E(R.box,'房号宫格：101 102 103 … 每个格子可点选编辑',120),
+        E(R.btn,'＋ 添加房号','ghost'),
+        E(R.note,'支持 Excel 模板批量导入；房号关联报修与维保记录') ] },
+{ g:'hotel', no:'H9', name:'维保计划页', desc:'创建周期性维保计划并跟踪进程',
+  els:[ E(R.nav,'维保计划','＋新建'),
+        E(R.litem,'空调季度保养 · Q4','覆盖 86 间 · 进度 45/86','<span class="tag">45%</span>'),
+        E(R.litem,'消防设备年检','12月执行 · 待开始','<span class="tag">未开始</span>'),
+        E(R.litem,'热水系统月度巡检','每月 5 日 · 进行中','<span class="tag green">正常</span>'),
+        E(R.box,'计划详情展开：执行记录进程 + 关联工单 + 材料消耗',80),
+        E(R.more,'') ] },
+{ g:'hotel', no:'H10', name:'充值续费页', desc:'充值后才能正常报修（平台核心盈利点）',
+  els:[ E(R.nav,'充值续费'),
+        E(R.box,'当前状态：服务有效期至 2026-12-31 · 余额 ¥1,200',48,'dark'),
+        E(R.box,'◉ 年付套餐 ¥3,600/年 · 不限工单量 <span class="tag green">推荐</span>',52,'blue'),
+        E(R.box,'○ 季付套餐 ¥1,200/季 · 不限工单量',48),
+        E(R.box,'○ 按次充值 ¥200 起 · 单次维修扣费',48),
+        E(R.btn,'立即支付（微信支付）'),
+        E(R.note,'支付成功即时开通报修权限；支持开具电子发票') ] },
+{ g:'hotel', no:'H11', name:'酒店端 · 我的', desc:'酒店资料 / 账户 / 服务入口',
+  els:[ E(R.nav,'我的'),
+        E(R.litem,'🏨 维也纳酒店（虹桥店）','已认证 · 服务有效期至 2026-12-31','✎'),
+        E(R.box,'余额 ¥1,200 ｜ 工单 39 ｜ 评价 4.8★',44,'solid'),
+        E(R.litem,'💳 充值续费','','›'), E(R.litem,'🧾 发票管理','','›'),
+        E(R.litem,'📄 合同与协议','','›'), E(R.litem,'🎧 联系客服','','›'),
+        E(R.litem,'⚙️ 设置','','›'),
+        E(R.tabbar,['首页','工单','维保','酒店圈','我的'],4) ] },
+
+/* ---------- 维修师傅端 ---------- */
+{ g:'master', no:'M1', name:'师傅端 · 首页', desc:'任务概览 + 抢单入口 + 收入速览',
+  els:[ E(R.nav,'千鸟快服 · 师傅端','🔔'),
+        E(R.box,'今日：待施工 2 · 施工中 1 · 本月收入 ¥4,860',48,'dark'),
+        E(R.btn,'⚡ 去抢单（附近 5 个新工单）'),
+        E(R.tabs,['待施工 2','施工中 1','待验收 1'],0),
+        E(R.litem,'#WX20261023 · 维也纳酒店 1208房','空调不制冷 · 预约 15:00','<span class="tag">待施工</span>'),
+        E(R.litem,'#WX20261021 · 如家酒店 大堂','吊灯维修 · 紧急单','<span class="tag red">紧急</span>'),
+        E(R.more,''),
+        E(R.tabbar,['首页','工单大厅','我的任务','酒店圈','我的'],0) ] },
+{ g:'master', no:'M2', name:'工单大厅（抢单池）', desc:'按距离 / 类型 / 金额筛选可接工单',
+  els:[ E(R.nav,'工单大厅'),
+        E(R.tabs,['距离最近','金额最高','紧急单','我擅长的'],0),
+        E(R.litem,'🚨 空调不制冷 · 1.2km','维也纳酒店 · 预计 ¥150','抢'),
+        E(R.litem,'🔧 马桶堵塞 · 2.8km','如家酒店 · 预计 ¥80','抢'),
+        E(R.litem,'🔧 灯具更换 · 3.5km','汉庭酒店 · 预计 ¥60','抢'),
+        E(R.more,''),
+        E(R.note,'仅显示已充值酒店的工单 · 抢单后 30 分钟内须响应'),
+        E(R.tabbar,['首页','工单大厅','我的任务','酒店圈','我的'],1) ] },
+{ g:'master', no:'M3', name:'工单详情 / 确认接单', desc:'查看详情并确认接单',
+  els:[ E(R.nav,'工单详情'),
+        E(R.box,'#WX20261023 · 空调不制冷 <span class="tag red">紧急</span><br>维也纳酒店（虹桥店）· 1208房',54),
+        E(R.box,'故障描述 + 酒店上传的照片/语音 ▶',64),
+        E(R.box,'地图：酒店位置 · 距我 1.2km · 驾车 8 分钟',80),
+        E(R.litem,'🏨 联系人：张经理','138****8888','📞'),
+        E(R.box,'预计报酬 ¥150 · 平台结算（验收后到账）',40,'blue'),
+        E(R.btn,'确认接单'),
+        E(R.btn,'暂不接单','gray') ] },
+{ g:'master', no:'M4', name:'施工上报页', desc:'更新进度节点 + 上传照片 + 记录材料',
+  els:[ E(R.nav,'施工上报'),
+        E(R.tl,[['✓ 已接单',1],['✓ 已到店（定位打卡 15:10）',1],['● 维修中',1],['○ 完工提交',0]]),
+        E(R.btn,'📍 到店打卡','ghost'),
+        E(R.box,'上传施工照片（维修前/中/后）',56),
+        E(R.box,'进展说明（文字/语音）…',44),
+        E(R.box,'🧰 材料使用登记：名称 · 数量 · 单价（从酒店材料清单扣减或新增）',52),
+        E(R.btn,'保存并同步给酒店') ] },
+{ g:'master', no:'M5', name:'完工提交页', desc:'完工凭证 + 费用确认，提交后等酒店验收',
+  els:[ E(R.nav,'完工提交'),
+        E(R.box,'维修结果说明（必填）…',56),
+        E(R.box,'完工照片 ×3（必填，维修后状态）',56),
+        E(R.box,'费用明细：工时 ¥120 + 材料 ¥80 = ¥200',48,'blue'),
+        E(R.box,'是否影响售房：○ 已恢复可售  ○ 仍需观察',40),
+        E(R.btn,'提交完工，等待酒店验收'),
+        E(R.note,'酒店 48h 未操作将自动验收通过') ] },
+{ g:'master', no:'M6', name:'我的任务列表', desc:'全部接单记录与状态',
+  els:[ E(R.nav,'我的任务'),
+        E(R.tabs,['进行中','待验收','已完成','已取消'],0),
+        E(R.box,'🔍 按酒店 / 日期搜索',34),
+        E(R.litem,'#WX20261023 · 维也纳 1208','维修中 · 已到店','<span class="tag">上报</span>'),
+        E(R.litem,'#WX20261019 · 汉庭 502','待酒店验收','<span class="tag green">待收款</span>'),
+        E(R.more,''),
+        E(R.tabbar,['首页','工单大厅','我的任务','酒店圈','我的'],2) ] },
+{ g:'master', no:'M7', name:'收入结算页', desc:'收入明细与提现',
+  els:[ E(R.nav,'收入'),
+        E(R.box,'本月收入 ¥4,860 ｜ 可提现 ¥3,210 ｜ 待结算 ¥1,650',52,'dark'),
+        E(R.btn,'提现到微信零钱'),
+        E(R.tabs,['全部','已结算','结算中'],0),
+        E(R.litem,'#WX20261019 · 汉庭 502','工时+材料 ¥200','<span class="tag green">已结算</span>'),
+        E(R.litem,'#WX20261023 · 维也纳 1208','¥200','<span class="tag">验收中</span>'),
+        E(R.more,'') ] },
+{ g:'master', no:'M8', name:'师傅端 · 我的', desc:'认证信息 / 评分 / 设置',
+  els:[ E(R.nav,'我的'),
+        E(R.litem,'👷 王师傅','已实名 · 电工证 ✓ · 服务 328 单','✎'),
+        E(R.box,'评分 4.9★ ｜ 好评率 98% ｜ 差评 2 条',44,'solid'),
+        E(R.litem,'🛠 我的技能与认证','','›'), E(R.litem,'🏨 我服务的酒店','查看负责酒店信息','›'),
+        E(R.litem,'💰 收入结算','','›'), E(R.litem,'📜 平台规则与培训','','›'),
+        E(R.litem,'⚙️ 设置','','›'),
+        E(R.tabbar,['首页','工单大厅','我的任务','酒店圈','我的'],4) ] },
+
+/* ---------- 公共平台 ---------- */
+{ g:'community', no:'C1', name:'酒店圈（社区）', desc:'信息交流 + 招聘 + 广告，双端共用',
+  els:[ E(R.nav,'酒店圈'),
+        E(R.tabs,['推荐','交流','招聘','广告位'],0),
+        E(R.litem,'📢 招聘：前台 2 名 · 虹桥','维也纳酒店 · 1小时前','›'),
+        E(R.litem,'💬 求助：锅炉品牌选型推荐？','匿名酒店 · 评论 12','›'),
+        E(R.box,'[ 广告 Banner 位：布草供应商 / 消杀服务 ]',56),
+        E(R.litem,'📢 转让：九成新布草车 ×3','某酒店 · 昨天','›'),
+        E(R.more,''),
+        E(R.fab,''),
+        E(R.tabbar,['首页','工单','维保','酒店圈','我的'],3) ] },
+];
+
+/* ========== 渲染 ========== */
+function renderPages(pages){
+  return pages.map(p=>{
+    const body = p.els.map(e=>e.fn(...e.args)).join('');
+    return `<div class="phone-wrap">
+      <div class="phone"><div class="screen">${R.sb()}${body}</div></div>
+      <div class="caption"><span class="no">${p.no}</span><div class="nm">${p.name}</div><div class="ds">${p.desc}</div></div>
+    </div>`;
+  }).join('');
+}
+['common','hotel','master','community'].forEach(g=>{
+  document.getElementById('g-'+g).innerHTML = renderPages(PAGES.filter(p=>p.g===g));
+});
+</script>
+</body>
+</html>
